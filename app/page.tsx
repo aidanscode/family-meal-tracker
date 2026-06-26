@@ -1,30 +1,75 @@
 "use client";
 
-import { Authenticated, Unauthenticated, useQuery } from "convex/react";
+import {
+  Authenticated,
+  Unauthenticated,
+  useMutation,
+  useQuery,
+} from "convex/react";
 import { api } from "../convex/_generated/api";
-import { SignInButton, UserButton } from "@clerk/nextjs";
+import { useCallback, useState } from "react";
+import { Input } from "@/components/ui/input";
+
+import Meal from "./_components/Meal";
 
 export default function Home() {
   return (
     <>
       <Authenticated>
-        <UserButton />
         <PageContent />
       </Authenticated>
       <Unauthenticated>
-        <SignInButton />
+        <h2>Sign in to get started</h2>
       </Unauthenticated>
     </>
   );
 }
 
 function PageContent() {
-  const tasks = useQuery(api.tasks.get);
+  const [mealInput, setMealInput] = useState<string | undefined>(undefined);
+
+  const meals = useQuery(api.meals.list, {
+    search: mealInput,
+  });
+  const submitMeal = useMutation(api.meals.submit);
+
+  const submitNewMeal = useCallback(
+    async (e: React.SubmitEvent) => {
+      e.preventDefault();
+
+      if (!mealInput || mealInput.trim().length === 0) {
+        alert("You must enter a meal before submitting");
+        return;
+      }
+
+      await submitMeal({ title: mealInput.trim() });
+      setMealInput(undefined);
+    },
+    [mealInput],
+  );
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      {tasks?.map(({ _id, text }) => (
-        <div key={_id}>{text}</div>
-      ))}
+    <main className="min-h-full h-full container mx-auto mt-5">
+      <div className="max-w-[700px] mx-auto">
+        <h1 className="text-5xl">My Meals</h1>
+        <div className="flex flex-col gap-1 mt-5">
+          <form onSubmit={submitNewMeal}>
+            <Input
+              type="text"
+              className="w-full text-xl px-3"
+              placeholder="Submit or search..."
+              value={mealInput ?? ""}
+              onChange={(e) => setMealInput(e.target.value || undefined)}
+            />
+          </form>
+
+          <div className="py-2" />
+
+          {(meals ?? []).map((meal) => (
+            <Meal key={meal._id} meal={meal} />
+          ))}
+        </div>
+      </div>
     </main>
   );
 }
