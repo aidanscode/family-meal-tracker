@@ -19,7 +19,9 @@ export default function Home() {
         <PageContent />
       </Authenticated>
       <Unauthenticated>
-        <h2>Sign in to get started</h2>
+        <div className="container mx-auto">
+          <h2 className="text-4xl">Sign in to get started</h2>
+        </div>
       </Unauthenticated>
     </>
   );

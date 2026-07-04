@@ -11,12 +11,10 @@ export default function Navbar() {
           </span>
         </a>
 
-        <div className="w-full md:block md:w-auto">
-          <ul className="flex flex-row items-center font-medium p-4 md:p-0 mt-4 border border-default rounded-base bg-neutral-secondary-soft md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-neutral-primary">
-            <ThemeControl />
-            <AuthControls />
-          </ul>
-        </div>
+        <ul className="flex flex-row items-center font-medium p-0 mt-0 rounded-base bg-neutral-secondary-soft md:flex-row md:space-x-8 md:border-0 md:bg-neutral-primary">
+          <ThemeControl />
+          <AuthControls />
+        </ul>
       </div>
     </nav>
   );
